@@ -10,8 +10,8 @@ void error(char *message);
 void warn(char *message);
 void info(char *message);
 
-void _debug(char *filepath, int line, char *message, ...);
-void _trace(char *filepath, int line, char *message);
+void _debug(char *file, int line, char *message, ...);
+void _trace(char *file, int line, char *message);
 
 #ifndef NDEBUG
 #define debug(...) _debug(__FILE__, __LINE__, __VA_ARGS__)

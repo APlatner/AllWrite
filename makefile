@@ -12,10 +12,11 @@ debug: ${BINARY}
 	gdb $^
 
 memcheck: ${BINARY}
-	valgrind --log-file=valgrind-log.txt --leak-check=full --track-origins=yes --show-leak-kinds=all ./${BINARY}
+	valgrind --log-file=valgrind-log.txt --leak-check=full --track-origins=yes --show-leak-kinds=all ./$^
 
-clean: ${BINARY}
-	rm -f $^
+clean:
+	rm -f ${BINARY}
 
 ${BINARY}: ${SRCS}
+	@mkdir -p $(@D)
 	gcc ${CFLAGS} $^ -o $@ ${LDFLAGS}
