@@ -12,9 +12,7 @@
 static FILE *active_file = NULL;
 static char *active_filepath = NULL;
 
-result_t file_manager_startup() {
-  return (result_t){NO_ERROR, "file manager started."};
-}
+result_t file_manager_startup() { return NO_ERROR; }
 
 void file_manager_shutdown() {
   if (active_file != NULL) {
@@ -32,36 +30,34 @@ result_t file_manager_open(const char *filepath) {
 
   if (filepath == NULL) {
     error("improper file path!");
-    return (result_t){FILE_MANAGER_ERROR, "file manager!"};
+    return FILE_MANAGER_ERROR;
   }
 
   if (access(filepath, F_OK)) {
-    error("specified file does not exist!");
-    return (result_t){FILE_MANAGER_ERROR, "file manager!"};
-  }
+    active_file = fopen(filepath, "w+");
+  } else {
+    if (access(filepath, R_OK | W_OK)) {
+      error("missing permissions for specified file!");
+      return FILE_MANAGER_ERROR;
+    }
 
-  if (access(filepath, R_OK | W_OK)) {
-    error("missing permissions for specified file!");
-    return (result_t){FILE_MANAGER_ERROR, "file manager!"};
-  }
+    if (strncmp(filepath, "text-editor.log", 32) == 0) {
+      error("attempting to open protected file!");
+      return FILE_MANAGER_ERROR;
+    }
 
-  if (strncmp(filepath, "text-editor-log.txt", 32) == 0) {
-    error("attempting to open protected file!");
-    return (result_t){FILE_MANAGER_ERROR, "file manager!"};
+    active_file = fopen(filepath, "r+");
   }
 
   active_filepath = malloc(256);
   strncpy(active_filepath, filepath, 256);
 
-  active_file = fopen(filepath, "r+");
-  if (active_file == NULL)
-    return (result_t){FILE_MANAGER_ERROR, "failed to open file!"};
+  if (active_file == NULL) {
+    error("failed to open file!");
+    return FILE_MANAGER_ERROR;
+  }
 
-  // use memcheck
-  char *string = read_file(active_file);
-  // split_buffer_t split_buffer;
-
-  return (result_t){NO_ERROR, NULL};
+  return NO_ERROR;
 }
 
 void file_manager_close() {

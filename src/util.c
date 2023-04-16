@@ -2,6 +2,9 @@
 
 #include "logger.h"
 
+#include <stddef.h>
+#include <stdlib.h>
+
 char *read_file(FILE *file) {
   fseek(file, 0, SEEK_END);
   long len = ftell(file);

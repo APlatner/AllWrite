@@ -8,21 +8,15 @@
 static FILE *log_file = NULL;
 
 void print_result(result_t result) {
-  switch (result.code) {
+  switch (result) {
   case APP_ERROR:
-    error("application error");
-    error(result.message);
+    fatal("application error");
     break;
   case LOGGER_ERROR:
-    error("logger error");
-    error(result.message);
+    fatal("logger error");
     break;
   case FILE_MANAGER_ERROR:
-    error("file manager error");
-    error(result.message);
-    break;
-  case NO_ERROR:
-    trace(result.message);
+    fatal("file manager error");
     break;
   default:
     break;
@@ -32,14 +26,16 @@ void print_result(result_t result) {
 result_t logger_startup(const char *filepath) {
   trace("logger starting.");
   if (filepath == NULL) {
-    return (result_t){LOGGER_ERROR, "provided log file path is NULL!"};
+    fatal("provided log file path is NULL!");
+    return LOGGER_ERROR;
   }
   log_file = fopen(filepath, "w+");
   if (log_file == NULL) {
-    return (result_t){LOGGER_ERROR, "failed to open log file!"};
+    fatal("failed to open log file!");
+    return LOGGER_ERROR;
   }
 
-  return (result_t){NO_ERROR, "started logger"};
+  return NO_ERROR;
 }
 
 void logger_shutdown() {
