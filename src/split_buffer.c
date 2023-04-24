@@ -20,15 +20,21 @@ void split_buffer_create(split_buffer_t *split_buffer, const char *string) {
         split_buffer->current_size);
 }
 
-void split_buffer_move(split_buffer_t *split_buffer, long distance) {
+void split_buffer_destroy(split_buffer_t *split_buffer) {
+  split_buffer->pre_cursor_index = 0;
+  split_buffer->post_cursor_index = MAX_BUFFER_SIZE - 1;
+  split_buffer->current_size = 0;
+}
+
+result_t split_buffer_move(split_buffer_t *split_buffer, long distance) {
   if (!distance) {
     error("distance must be non zero!");
-    return;
+    return TEXT_BUFFER_ERROR;
   }
   if (split_buffer->pre_cursor_index + distance > split_buffer->current_size ||
       split_buffer->pre_cursor_index < 0) {
     error("distance must be within the bounds of the buffer's current size!");
-    return;
+    return TEXT_BUFFER_ERROR;
   }
 
   if (distance > 0) {
@@ -45,17 +51,20 @@ void split_buffer_move(split_buffer_t *split_buffer, long distance) {
   debug("pre cursor index: %ld, post cursor index: %ld, current size: %ld",
         split_buffer->pre_cursor_index, split_buffer->post_cursor_index,
         split_buffer->current_size);
+  debug("moved %ld", distance);
+
+  return NO_ERROR;
 }
 
-void split_buffer_append(split_buffer_t *split_buffer, char c) {
+result_t split_buffer_append(split_buffer_t *split_buffer, char c) {
   if (!c) {
     error("character must non null!");
-    return;
+    return TEXT_BUFFER_ERROR;
   }
 
   if (split_buffer->current_size == MAX_BUFFER_SIZE) {
     error("buffer is full!");
-    return;
+    return TEXT_BUFFER_ERROR;
   }
 
   split_buffer->current_size++;
@@ -64,12 +73,15 @@ void split_buffer_append(split_buffer_t *split_buffer, char c) {
   debug("pre cursor index: %ld, post cursor index: %ld, current size: %ld",
         split_buffer->pre_cursor_index, split_buffer->post_cursor_index,
         split_buffer->current_size);
+  debug("character appended: %c", c);
+
+  return NO_ERROR;
 }
 
-char split_buffer_remove(split_buffer_t *split_buffer) {
+result_t split_buffer_remove(split_buffer_t *split_buffer) {
   if (split_buffer->current_size == 0) {
     error("buffer is empty!");
-    return;
+    return TEXT_BUFFER_ERROR;
   }
 
   split_buffer->current_size--;
@@ -77,6 +89,7 @@ char split_buffer_remove(split_buffer_t *split_buffer) {
   debug("pre cursor index: %ld, post cursor index: %ld, current size: %ld",
         split_buffer->pre_cursor_index, split_buffer->post_cursor_index,
         split_buffer->current_size);
+  return NO_ERROR;
 }
 
 void split_buffer_print(split_buffer_t *split_buffer) {

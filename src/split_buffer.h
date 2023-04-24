@@ -1,5 +1,7 @@
 #pragma once
 
+#include "result.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -13,10 +15,11 @@ typedef struct split_buffer_t {
 } split_buffer_t;
 
 void split_buffer_create(split_buffer_t *split_buffer, const char *string);
+void split_buffer_destroy(split_buffer_t *split_buffer);
 
-void split_buffer_move(split_buffer_t *split_buffer, long distance);
+result_t split_buffer_move(split_buffer_t *split_buffer, long distance);
 
-void split_buffer_append(split_buffer_t *split_buffer, char c);
-char split_buffer_remove(split_buffer_t *split_buffer);
+result_t split_buffer_append(split_buffer_t *split_buffer, char c);
+result_t split_buffer_remove(split_buffer_t *split_buffer);
 
 void split_buffer_print(split_buffer_t *split_buffer);

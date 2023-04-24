@@ -7,6 +7,16 @@ typedef enum result_t {
   APP_ERROR,
   LOGGER_ERROR,
   FILE_MANAGER_ERROR,
+  WINDOWING_ERROR,
+  OPENGL_ERROR,
+  TEXT_BUFFER_ERROR,
 } result_t;
+
+/*
+typedef struct result_t {
+  void *value;
+  int code;
+}
+*/
 
 void print_result(result_t result);

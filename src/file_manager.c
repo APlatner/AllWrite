@@ -22,7 +22,7 @@ void file_manager_shutdown() {
 }
 
 // create file if it doesn't exist
-result_t file_manager_open(const char *filepath) {
+result_t file_manager_open(split_buffer_t *buffer, const char *filepath) {
   if (active_file != NULL) {
     warn("attempting to open a new file without closing the previous one.");
     file_manager_close();
@@ -56,6 +56,11 @@ result_t file_manager_open(const char *filepath) {
     error("failed to open file!");
     return FILE_MANAGER_ERROR;
   }
+
+  char file_buffer[4096];
+  size_t bytes_read = fread(file_buffer, 1, 4096, active_file);
+  file_buffer[bytes_read] = '\0';
+  split_buffer_create(buffer, file_buffer);
 
   return NO_ERROR;
 }
@@ -91,4 +96,17 @@ void file_manager_delete(const char *filepath) {
   }
 }
 
-// void file_manager_save();
+result_t file_manager_save(split_buffer_t *buffer) {
+  if (active_file == NULL || active_filepath == NULL) {
+    error("expected active file to not be null!");
+    return FILE_MANAGER_ERROR;
+  }
+  split_buffer_print(buffer);
+  freopen(active_filepath, "w", active_file);
+
+  fwrite(buffer->buffer, 1, buffer->pre_cursor_index, active_file);
+  fwrite(&buffer->buffer[buffer->post_cursor_index], 1,
+         MAX_BUFFER_SIZE - buffer->post_cursor_index - 1, active_file);
+
+  return NO_ERROR;
+}
