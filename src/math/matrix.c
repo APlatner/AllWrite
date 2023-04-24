@@ -1,5 +1,7 @@
 #include "matrix.h"
 
+#include <stdio.h>
+
 mat4 mat4_ortho(float left, float right, float bottom, float top, float near,
                 float far) {
 
