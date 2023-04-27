@@ -9,7 +9,7 @@ run: ${BINARY}
 	./$^
 
 debug: ${BINARY}
-	gdb $^
+	lldb $^
 
 memcheck: ${BINARY}
 	valgrind --log-file=valgrind-log.txt --leak-check=full  --show-leak-kinds=all --track-origins=yes ./$^
@@ -19,4 +19,4 @@ clean:
 
 ${BINARY}: ${SRCS}
 	@mkdir -p $(@D)
-	gcc ${CFLAGS} $^ -o $@ ${LDFLAGS}
+	clang ${CFLAGS} $^ -o $@ ${LDFLAGS}

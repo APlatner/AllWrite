@@ -3,7 +3,7 @@
 #include "result.h"
 
 result_t logger_startup(const char *filepath);
-void logger_shutdown();
+void logger_shutdown(void);
 
 void fatal(char *message);
 void error(char *message);

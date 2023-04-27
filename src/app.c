@@ -116,7 +116,7 @@ result_t app_run(app_t *app) {
   return NO_ERROR;
 }
 
-void buffer_test() {
+void buffer_test(void) {
   split_buffer_t buffer;
   split_buffer_create(&buffer, "Hello,_World!");
   split_buffer_print(&buffer);

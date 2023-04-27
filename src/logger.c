@@ -38,7 +38,7 @@ result_t logger_startup(const char *filepath) {
   return NO_ERROR;
 }
 
-void logger_shutdown() {
+void logger_shutdown(void) {
   if (log_file == NULL) {
     return;
   }

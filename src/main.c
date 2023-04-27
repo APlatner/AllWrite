@@ -1,8 +1,7 @@
-#include <stdio.h>
-
 #include "app.h"
+#include "test.h"
 
-int main() {
+int main(void) {
   app_t app = {"text-editor"};
   result_t res = app_startup(&app);
   print_result(res);

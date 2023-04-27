@@ -12,9 +12,9 @@
 static FILE *active_file = NULL;
 static char *active_filepath = NULL;
 
-result_t file_manager_startup() { return NO_ERROR; }
+result_t file_manager_startup(void) { return NO_ERROR; }
 
-void file_manager_shutdown() {
+void file_manager_shutdown(void) {
   if (active_file != NULL) {
     warn("attempting to shutdown file manager without closing active file.");
     file_manager_close();
@@ -65,7 +65,7 @@ result_t file_manager_open(split_buffer_t *buffer, const char *filepath) {
   return NO_ERROR;
 }
 
-void file_manager_close() {
+void file_manager_close(void) {
   if (active_file == NULL) {
     warn("attempting to close an unopened file.");
     return;
