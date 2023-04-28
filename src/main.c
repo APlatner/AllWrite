@@ -1,5 +1,4 @@
 #include "app.h"
-#include "test.h"
 
 int main(void) {
   app_t app = {"text-editor"};

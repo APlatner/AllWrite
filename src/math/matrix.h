@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 typedef union  mat4_t {
     float data[16];
     struct {

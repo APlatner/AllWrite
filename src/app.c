@@ -2,8 +2,9 @@
 
 #include "file_manager.h"
 #include "logger.h"
-#include "render_object.h"
 #include "split_buffer.h"
+#include "widgets/quad.h"
+#include "widgets/texture.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -71,6 +72,11 @@ result_t app_startup(app_t *app) {
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(renderer_debug_callback, window);
 
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glActiveTexture(GL_TEXTURE0);
+
   return NO_ERROR;
 }
 
@@ -84,30 +90,25 @@ void app_shutdown(app_t *app) {
 result_t app_run(app_t *app) {
   info("app running");
 
-  buffer_layout_t layout;
-  buffer_layout_create(&layout);
-  buffer_element_t element0;
-  element0.type = GL_FLOAT;
-  element0.count = 2;
-  element0.normalized = GL_FALSE;
-  buffer_layout_load(&layout, element0);
-
-  render_object_t object;
-  render_object_create_vao(&object, &layout);
-
-  float vertices[3][2] = {
-      {0.5, 0.5},
-      {0.5, -0.5},
-      {-0.5, -0.5},
-  };
-
-  render_object_load_data(&object, (long)sizeof(vertices), vertices);
-  render_object_load_shaders(&object, NULL, NULL);
+  quad_t quad;
+  quad.position = (vec2_t){{-0.5, -0.5}};
+  quad.size = (vec2_t){{1.0, 1.0}};
+  quad.color = (vec4_t){{0.5f, 0.8f, 0.9f, 1.0f}};
+  quad_load(&quad);
+  texture_t texture;
+  texture.position = (vec2_t){{-0.5, -0.5}};
+  texture.size = (vec2_t){{1.0, 1.0}};
+  texture.color = (vec4_t){{0.0f, 0.8f, 0.9f, 1.0f}};
+  texture_load(&texture);
 
   while (!glfwWindowShouldClose(window)) {
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
+      quad.color = (vec4_t){{0.8f, 0.8f, 0.8f, 1.0f}};
+      quad_update(&quad);
+    }
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    render_object_draw(&object);
+    render_object_draw(&texture.object);
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -323,15 +324,15 @@ void renderer_debug_callback(uint32_t source, uint32_t type, uint32_t id,
   switch (severity) {
   case GL_DEBUG_SEVERITY_HIGH: {
     _severity = "High";
-    glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
+    // glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
   } break;
   case GL_DEBUG_SEVERITY_MEDIUM: {
     _severity = "Medium";
-    glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
+    // glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
   } break;
   case GL_DEBUG_SEVERITY_LOW: {
     _severity = "Low";
-    glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
+    // glfwSetWindowShouldClose((GLFWwindow *)user_param, GLFW_TRUE);
   } break;
   case GL_DEBUG_SEVERITY_NOTIFICATION:
     _severity = "Notification";

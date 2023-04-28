@@ -23,7 +23,7 @@ typedef struct render_object_t {
 	uint32_t vertices;
   uint32_t vbo;
   uint32_t vao;
-  uint32_t ebo;
+  // uint32_t ebo;
   uint32_t shader_id;
   uint32_t texture_id;
 } render_object_t;
@@ -33,6 +33,7 @@ void buffer_layout_load(buffer_layout_t *layout, buffer_element_t element);
 
 void render_object_create_vao(render_object_t *object, buffer_layout_t *layout);
 void render_object_load_data(render_object_t *object, long size,  const void *data);
+void render_object_load_texture(render_object_t *object, const char *texture_filepath);
 void render_object_load_shaders(render_object_t *object, const char *vertex_shader_filepath, const char *fragment_shader_filepath);
 
 void render_object_draw(render_object_t *object);

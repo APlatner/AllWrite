@@ -51,6 +51,7 @@ void fatal(char *message) {
     printf("[FATAL]|%s\n", message);
   } else {
     fprintf(log_file, "[FATAL]|%s\n", message);
+    fflush(log_file);
   }
 }
 
@@ -59,6 +60,7 @@ void error(char *message) {
     printf("[ERROR]|%s\n", message);
   } else {
     fprintf(log_file, "[ERROR]|%s\n", message);
+    fflush(log_file);
   }
 }
 
@@ -67,6 +69,7 @@ void warn(char *message) {
     printf("[WARN] |%s\n", message);
   } else {
     fprintf(log_file, "[WARN] |%s\n", message);
+    fflush(log_file);
   }
 }
 
@@ -75,6 +78,7 @@ void info(char *message) {
     printf("[INFO] |%s\n", message);
   } else {
     fprintf(log_file, "[INFO] |%s\n", message);
+    fflush(log_file);
   }
 }
 
@@ -88,6 +92,7 @@ void _debug(char *file, int line, char *message, ...) {
     printf("[DEBUG]|[FILE:%s][LINE:%i] %s\n", file, line, buffer);
   } else {
     fprintf(log_file, "[DEBUG]|[FILE:%s][LINE:%i] %s\n", file, line, buffer);
+    fflush(log_file);
   }
 }
 
@@ -96,5 +101,6 @@ void _trace(char *file, int line, char *message) {
     printf("[TRACE]|[FILE:%s][LINE:%i] %s\n", file, line, message);
   } else {
     fprintf(log_file, "[TRACE]|[FILE:%s][LINE:%i] %s\n", file, line, message);
+    fflush(log_file);
   }
 }

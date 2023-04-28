@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 typedef union vec2_t {
   float data[2];
   struct {
@@ -15,6 +17,11 @@ typedef union vec3_t {
     float y;
     float z;
   };
+	struct {
+    float r;
+    float g;
+    float b;
+  };
 } vec3_t;
 
 typedef union vec4_t {
@@ -24,6 +31,12 @@ typedef union vec4_t {
     float y;
     float z;
     float w;
+  };
+	struct {
+    float r;
+    float g;
+    float b;
+		float a;
   };
 } vec4_t;
 
