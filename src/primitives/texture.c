@@ -67,3 +67,7 @@ void texture_update(texture_t *texture) {
 
   render_object_load_data(&texture->object, sizeof(vertices), vertices);
 }
+
+void texture_destroy(texture_t *texture) {
+  render_object_delete(&texture->object);
+}

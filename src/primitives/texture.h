@@ -16,23 +16,17 @@
 
 #pragma once
 
-#include "result.h"
+#include <math/vector.h>
+#include <render_object.h>
 
-result_t logger_startup(const char *filepath);
-void logger_shutdown(void);
+typedef struct texture_t {
+  render_object_t object;
 
-void fatal(char *message);
-void error(char *message);
-void warn(char *message);
-void info(char *message);
+  vec2_t position;
+  vec2_t size;
+  vec4_t color;
+} texture_t;
 
-void _debug(char *file, int line, char *message, ...);
-void _trace(char *file, int line, char *message);
-
-#ifndef NDEBUG
-#define debug(...) _debug(__FILE__, __LINE__, __VA_ARGS__)
-#define trace(message) _trace(__FILE__, __LINE__, message)
-#else
-#define debug(...)
-#define trace(message)
-#endif
+void texture_load(texture_t *texture);
+void texture_update(texture_t *texture);
+void texture_destroy(texture_t *texture);

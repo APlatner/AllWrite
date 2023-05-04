@@ -16,23 +16,30 @@
 
 #pragma once
 
-#include "result.h"
+#include <render_object.h>
+#include <math/vector.h>
 
-result_t logger_startup(const char *filepath);
-void logger_shutdown(void);
+typedef struct char_glyph_t {
+	vec2_t start;
+	vec2_t end;
+	vec2_t size;
+	vec2_t bearing;
+	lvec2_t advance;
+} char_glyph_t;
 
-void fatal(char *message);
-void error(char *message);
-void warn(char *message);
-void info(char *message);
+typedef struct font_t {
+	render_object_t object;
 
-void _debug(char *file, int line, char *message, ...);
-void _trace(char *file, int line, char *message);
+	vec2_t position;
+	vec2_t size;
+	vec4_t color;
 
-#ifndef NDEBUG
-#define debug(...) _debug(__FILE__, __LINE__, __VA_ARGS__)
-#define trace(message) _trace(__FILE__, __LINE__, message)
-#else
-#define debug(...)
-#define trace(message)
-#endif
+	char_glyph_t characters[256];
+	vec4_t font_color;
+	float font_size;
+	char *string;
+} font_t;
+
+int font_load(font_t *font, const char *font_filepath, const char *string);
+void font_update(font_t *font);
+void font_destroy(font_t *font);

@@ -19,3 +19,14 @@ void mat4_print(mat4_t matrix) {
          matrix.data[8], matrix.data[9], matrix.data[10], matrix.data[11],
          matrix.data[12], matrix.data[13], matrix.data[14], matrix.data[15]);
 }
+
+vec4_t mat4_vec4_multiply(mat4_t matrix, vec4_t vec4) {
+  return (vec4_t){{matrix.x1 * vec4.x + matrix.x2 * vec4.x +
+                       matrix.x3 * vec4.x + matrix.x4 * vec4.x,
+                   matrix.y1 * vec4.y + matrix.y2 * vec4.y +
+                       matrix.y3 * vec4.y + matrix.y4 * vec4.y,
+                   matrix.z1 * vec4.z + matrix.z2 * vec4.z +
+                       matrix.z3 * vec4.z + matrix.z4 * vec4.z,
+                   matrix.w1 * vec4.w + matrix.w2 * vec4.w +
+                       matrix.w3 * vec4.w + matrix.w4 * vec4.w}};
+}

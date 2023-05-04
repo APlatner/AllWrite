@@ -2,16 +2,15 @@
 
 #include "file_manager.h"
 #include "logger.h"
+#include "primitives/quad.h"
+#include "primitives/texture.h"
 #include "split_buffer.h"
-#include "widgets/quad.h"
-#include "widgets/texture.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
 enum input_context_t {
-
   CONTROL_INPUT_CONTEXT = 0,
   TEXT_INPUT_CONTEXT,
   FILE_INPUT_CONTEXT,
@@ -72,7 +71,7 @@ result_t app_startup(app_t *app) {
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(renderer_debug_callback, window);
 
-  glEnable(GL_CULL_FACE);
+  // glEnable(GL_CULL_FACE);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glActiveTexture(GL_TEXTURE0);
@@ -91,14 +90,14 @@ result_t app_run(app_t *app) {
   info("app running");
 
   quad_t quad;
-  quad.position = (vec2_t){{-0.5, -0.5}};
-  quad.size = (vec2_t){{1.0, 1.0}};
+  quad.position = (vec2_t){{0.0f, 0.0f}};
+  quad.size = (vec2_t){{800.0f, 400.0f}};
   quad.color = (vec4_t){{0.5f, 0.8f, 0.9f, 1.0f}};
   quad_load(&quad);
   texture_t texture;
   texture.position = (vec2_t){{-0.5, -0.5}};
   texture.size = (vec2_t){{1.0, 1.0}};
-  texture.color = (vec4_t){{0.0f, 0.8f, 0.9f, 1.0f}};
+  texture.color = (vec4_t){{1.0f, 1.0f, 1.0f, 1.0f}};
   texture_load(&texture);
 
   while (!glfwWindowShouldClose(window)) {
@@ -108,10 +107,14 @@ result_t app_run(app_t *app) {
     }
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    render_object_draw(&quad.object);
     render_object_draw(&texture.object);
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  quad_destroy(&quad);
+  texture_destroy(&texture);
 
   // file_manager_close();
   return NO_ERROR;
