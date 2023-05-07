@@ -38,4 +38,4 @@ result_t split_buffer_move(split_buffer_t *split_buffer, long distance);
 result_t split_buffer_append(split_buffer_t *split_buffer, char c);
 result_t split_buffer_remove(split_buffer_t *split_buffer);
 
-void split_buffer_print(split_buffer_t *split_buffer);
+char *split_buffer_to_string(split_buffer_t *split_buffer);

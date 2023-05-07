@@ -11,7 +11,11 @@
 static FILE *active_file = NULL;
 static char *active_filepath = NULL;
 
-result_t file_manager_startup(void) { return NO_ERROR; }
+result_t file_manager_startup(void) {
+	info("file manager started");
+
+	return NO_ERROR;
+}
 
 void file_manager_shutdown(void) {
 	if (active_file != NULL) {
@@ -100,12 +104,11 @@ result_t file_manager_save(split_buffer_t *buffer) {
 		error("expected active file to not be null!");
 		return FILE_MANAGER_ERROR;
 	}
-	split_buffer_print(buffer);
 	freopen(active_filepath, "w", active_file);
 
 	fwrite(buffer->buffer, 1, buffer->pre_cursor_index, active_file);
 	fwrite(&buffer->buffer[buffer->post_cursor_index], 1,
-			MAX_BUFFER_SIZE - buffer->post_cursor_index - 1, active_file);
+	    MAX_BUFFER_SIZE - buffer->post_cursor_index - 1, active_file);
 
 	return NO_ERROR;
 }

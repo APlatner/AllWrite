@@ -6,4 +6,5 @@ compile_commands.json
 .cache
 .vscode
 res/textures
+res/fonts
 !docs/GLEW/*.txt

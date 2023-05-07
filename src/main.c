@@ -1,12 +1,11 @@
 #include "app.h"
 
 int main(void) {
-	app_t app = {"text-editor"};
-	result_t res = app_startup(&app);
+	result_t res = app_startup();
 	print_result(res);
-	res = app_run(&app);
+	res = app_run();
 	print_result(res);
-	app_shutdown(&app);
+	app_shutdown();
 
 	return 0;
 }

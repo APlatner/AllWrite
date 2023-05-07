@@ -19,14 +19,6 @@
 #include <render_object.h>
 #include <math/vector.h>
 
-typedef struct char_glyph_t {
-	vec2_t start;
-	vec2_t end;
-	vec2_t size;
-	vec2_t bearing;
-	lvec2_t advance;
-} char_glyph_t;
-
 typedef struct font_t {
 	render_object_t object;
 
@@ -34,12 +26,10 @@ typedef struct font_t {
 	vec2_t size;
 	vec4_t color;
 
-	char_glyph_t characters[256];
-	vec4_t font_color;
+	char_glyph_t characters[128];
 	float font_size;
-	char *string;
 } font_t;
 
 int font_load(font_t *font, const char *font_filepath, const char *string);
-void font_update(font_t *font);
+void font_update(font_t *font, const char *string);
 void font_destroy(font_t *font);

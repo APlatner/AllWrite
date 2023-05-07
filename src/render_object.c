@@ -1,6 +1,8 @@
 #include "render_object.h"
 #include "logger.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include <GL/glew.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -32,7 +34,7 @@ void buffer_layout_create(buffer_layout_t *layout) {
 
 void buffer_layout_load(buffer_layout_t *layout, buffer_element_t element) {
 	debug("Element count: %d, Element type: %d", element.count,
-			get_type_size(element.type));
+	    get_type_size(element.type));
 	layout->elements[layout->num_elements] = element;
 	layout->num_elements += 1;
 	layout->stride += element.count * get_type_size(element.type);
@@ -40,7 +42,7 @@ void buffer_layout_load(buffer_layout_t *layout, buffer_element_t element) {
 }
 
 void render_object_create_vao(
-		render_object_t *object, buffer_layout_t *layout) {
+    render_object_t *object, buffer_layout_t *layout) {
 	glGenVertexArrays(1, &object->vao);
 	glBindVertexArray(object->vao);
 	glGenBuffers(1, &object->vbo);
@@ -48,16 +50,16 @@ void render_object_create_vao(
 	intptr_t offset = 0;
 	for (int i = 0; i < layout->num_elements; ++i) {
 		glVertexAttribPointer(i, layout->elements[i].count,
-				layout->elements[i].type, layout->elements[i].normalized,
-				layout->stride, (void *)offset);
+		    layout->elements[i].type, layout->elements[i].normalized,
+		    layout->stride, (void *)offset);
 		glEnableVertexAttribArray(i);
 		offset +=
-				layout->elements[i].count * get_type_size(layout->elements[i].type);
+		    layout->elements[i].count * get_type_size(layout->elements[i].type);
 	}
 }
 
 void render_object_load_data(
-		render_object_t *object, long size, const void *data) {
+    render_object_t *object, long size, const void *data) {
 	trace("loading vertex buffer...");
 	int stride = 0;
 	glBindVertexArray(object->vao);
@@ -67,8 +69,15 @@ void render_object_load_data(
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
 }
 
+void render_object_load_sub_data(
+    render_object_t *object, long size, long offset, const void *data) {
+	trace("loading vertex sub buffer...");
+	glBindBuffer(GL_ARRAY_BUFFER, object->vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
+
 void render_object_load_texture(
-		render_object_t *object, const char *texture_filepath) {
+    render_object_t *object, const char *texture_filepath) {
 	glGenTextures(1, &object->texture_id);
 	glBindTexture(GL_TEXTURE_2D, object->texture_id);
 
@@ -79,20 +88,108 @@ void render_object_load_texture(
 
 	int width = 0, height = 0, channels = 0;
 	uint8_t *data =
-			stbi_load(texture_filepath, &width, &height, &channels, STBI_rgb_alpha);
+	    stbi_load(texture_filepath, &width, &height, &channels, STBI_rgb_alpha);
 	if (!data) {
 		error("failed to load texture!\n");
 		stbi_image_free(data);
 		return;
 	}
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
-			GL_UNSIGNED_BYTE, data);
+	    GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
 }
 
+int render_object_load_font(render_object_t *object, char_glyph_t *characters,
+    const char *font_filepath, float font_size) {
+	FT_Library lib;
+	if (FT_Init_FreeType(&lib)) {
+		error("failed to init freetype!");
+		return -1;
+	}
+
+	FT_Face face;
+	if (FT_New_Face(lib, font_filepath, 0, &face)) {
+		FT_Done_FreeType(lib);
+		error("failed to create font face!");
+		return -1;
+	}
+
+	FT_Set_Pixel_Sizes(face, 0, font_size);
+	uint32_t width = 0, height = 0;
+	for (uint8_t c = ' '; c < '~'; ++c) {
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+			error("failed to load character");
+			continue;
+		}
+		if (face->glyph->bitmap.width > width) {
+			width = face->glyph->bitmap.width;
+		}
+		if (face->glyph->bitmap.rows > height) {
+			height = face->glyph->bitmap.rows;
+		}
+	}
+
+	GLubyte *data = malloc(width * height * 100);
+	memset(data, 0, width * height * 100);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &object->texture_id);
+	glBindTexture(GL_TEXTURE_2D, object->texture_id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width * 10, height * 10, 0, GL_RED,
+	    GL_UNSIGNED_BYTE, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	ivec2_t position = {{0}};
+	for (uint8_t c = ' '; c <= '~'; ++c) {
+		debug("loading character %c", c);
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+			error("failed to load character");
+			continue;
+		}
+
+		glTexSubImage2D(GL_TEXTURE_2D, 0, position.x, position.y,
+		    face->glyph->bitmap.width, face->glyph->bitmap.rows, GL_RED,
+		    GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
+
+		char_glyph_t glyph;
+		glyph.start = (vec2_t){{(float)position.x / ((float)width * 10),
+		    (float)position.y / ((float)height * 10)}};
+		glyph.end =
+		    (vec2_t){{((float)position.x + (float)face->glyph->bitmap.width) /
+		                  ((float)width * 10),
+		        ((float)position.y + (float)face->glyph->bitmap.rows) /
+		            ((float)height * 10)}};
+		glyph.size =
+		    (ivec2_t){{face->glyph->bitmap.width, face->glyph->bitmap.rows}};
+		glyph.bearing =
+		    (ivec2_t){{face->glyph->bitmap_left, face->glyph->bitmap_top}};
+		glyph.advance = (lvec2_t){{face->glyph->advance.x, face->glyph->advance.y}};
+
+		debug("character glyph start:(%f, %f), end:(%f, %f), size:(%i, %i), "
+		      "bearing:(%i, %i)",
+		    glyph.start.x, glyph.start.y, glyph.end.x, glyph.end.y, glyph.size.x,
+		    glyph.size.y, glyph.bearing.x, glyph.bearing.y);
+
+		characters[c] = glyph;
+		if (position.x == width * 9) {
+			position.y += height;
+			position.x = 0;
+		} else {
+			position.x += width;
+		}
+	}
+
+	FT_Done_Face(face);
+	FT_Done_FreeType(lib);
+	free(data);
+	return 0;
+}
+
 int compile_shader(
-		const char *filepath, int shader_type, uint32_t *shader_object) {
+    const char *filepath, int shader_type, uint32_t *shader_object) {
 	debug("compiling shader: %s", filepath);
 	FILE *file = fopen(filepath, "r");
 	if (file == NULL) {
@@ -135,7 +232,7 @@ int compile_shader(
 }
 
 void render_object_load_shaders(render_object_t *object,
-		const char *vertex_shader_filepath, const char *fragment_shader_filepath) {
+    const char *vertex_shader_filepath, const char *fragment_shader_filepath) {
 	trace("loading shaders...");
 	uint32_t vert_shader;
 	if (compile_shader(vertex_shader_filepath, GL_VERTEX_SHADER, &vert_shader)) {
@@ -143,7 +240,7 @@ void render_object_load_shaders(render_object_t *object,
 	}
 	uint32_t frag_shader;
 	if (compile_shader(
-					fragment_shader_filepath, GL_FRAGMENT_SHADER, &frag_shader)) {
+	        fragment_shader_filepath, GL_FRAGMENT_SHADER, &frag_shader)) {
 		return;
 	}
 	int success;
@@ -167,7 +264,7 @@ void render_object_load_shaders(render_object_t *object,
 }
 
 void render_object_set_uniform_mat4(
-		render_object_t *object, const char *uniform_name, float *mat4) {
+    render_object_t *object, const char *uniform_name, float *mat4) {
 	glUseProgram(object->shader_id);
 	GLint location = glGetUniformLocation(object->shader_id, uniform_name);
 	glUniformMatrix4fv(location, 1, GL_FALSE, mat4);

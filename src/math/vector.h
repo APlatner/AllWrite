@@ -56,6 +56,22 @@ typedef union vec4_t {
   };
 } vec4_t;
 
+typedef union ivec2_t {
+	int data[2];
+	struct {
+		int x;
+		int y;
+	};
+} ivec2_t;
+
+typedef union uvec2_t {
+	uint32_t data[2];
+	struct {
+		uint32_t x;
+		uint32_t y;
+	};
+} uvec2_t;
+
 typedef union lvec2_t {
 	long data[2];
 	struct {

@@ -16,8 +16,11 @@
 
 #pragma once
 
+#include <math/vector.h>
+
 #include <stdint.h>
 #include <stdbool.h>
+
 
 typedef struct buffer_element_t {
   int type;
@@ -44,12 +47,23 @@ typedef struct render_object_t {
   uint32_t texture_id;
 } render_object_t;
 
+
+typedef struct char_glyph_t {
+	vec2_t start;
+	vec2_t end;
+	ivec2_t size;
+	ivec2_t bearing;
+	lvec2_t advance;
+} char_glyph_t;
+
 void buffer_layout_create(buffer_layout_t *layout);
 void buffer_layout_load(buffer_layout_t *layout, buffer_element_t element);
 
 void render_object_create_vao(render_object_t *object, buffer_layout_t *layout);
-void render_object_load_data(render_object_t *object, long size,  const void *data);
+void render_object_load_data(render_object_t *object, long size, const void *data);
+void render_object_load_sub_data(render_object_t *object, long size, long offset, const void *data);
 void render_object_load_texture(render_object_t *object, const char *texture_filepath);
+int render_object_load_font(render_object_t *object, char_glyph_t *characters, const char *font_filepath, float font_size);
 void render_object_load_shaders(render_object_t *object, const char *vertex_shader_filepath, const char *fragment_shader_filepath);
 
 void render_object_set_uniform_mat4(render_object_t *object, const char *uniform_name, float *mat4);

@@ -33,4 +33,15 @@ This software depends on a number of libraries. The following libraries have the
 
 ## Next Stream TODO
 
--
+- Explain fixes made to font primitive
+- Finish font primitive
+- display file contents
+- display file name
+
+## Keybindings
+
+- Movement - alt + [i,j,k,l]
+- Open File - ctrl + o
+- Close File - ctrl + q
+- Save File - ctrl + s
+- Exit program - esc

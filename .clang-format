@@ -3,5 +3,5 @@ BasedOnStyle: LLVM
 IndentWidth: 2
 TabWidth: 2
 AlignAfterOpenBracket: DontAlign
-UseTab: ForContinuationAndIndentation
+UseTab: ForIndentation
 ...
