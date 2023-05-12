@@ -28,6 +28,7 @@ typedef struct font_t {
 
 	char_glyph_t characters[128];
 	float font_size;
+	long cursor_position;
 } font_t;
 
 int font_load(font_t *font, const char *font_filepath, const char *string);

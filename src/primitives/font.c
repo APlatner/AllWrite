@@ -37,13 +37,18 @@ void font_update(font_t *font, const char *string) {
 		font->object.vertices = 0;
 		return;
 	}
+	int cursor = 0;
+	if (font->cursor_position >= 0) {
+		cursor = 1;
+	}
+
 	debug("string: %s, %i", string, strlen(string));
 	render_object_load_data(
-	    &font->object, strlen(string) * 6 * 8 * sizeof(float), NULL);
+	    &font->object, (strlen(string) + cursor) * 6 * 8 * sizeof(float), NULL);
 	vec2_t current_position = font->position;
 	long advance = font->characters[(int)' '].advance.x >> 6;
 
-	for (int i = 0; string[i] != '\0'; ++i) {
+	for (int i = 0; i < strlen(string); ++i) {
 		char_glyph_t character = font->characters[(int)string[i]];
 		debug("current char: %c; current character advance: %ld", string[i],
 		    character.advance.x >> 6);
@@ -52,6 +57,37 @@ void font_update(font_t *font, const char *string) {
 			current_position.y += font->font_size;
 		} else if (string[i] == '\t') {
 			current_position.x += (advance)*2;
+		}
+		if (i == font->cursor_position && cursor) {
+			char_glyph_t cursor = font->characters[(int)'|'];
+			float temp_vertices[6][8] = {
+			    {current_position.x, current_position.y + font->font_size,
+			        cursor.start.x, cursor.end.y, font->color.r, font->color.g,
+			        font->color.b, font->color.a},
+
+			    {current_position.x + 4, current_position.y + font->font_size,
+			        cursor.end.x, cursor.end.y, font->color.r, font->color.g,
+			        font->color.b, font->color.a},
+
+			    {current_position.x, current_position.y, cursor.start.x,
+			        cursor.start.y, font->color.r, font->color.g, font->color.b,
+			        font->color.a},
+
+			    {current_position.x + 4, current_position.y, cursor.end.x,
+			        cursor.start.y, font->color.r, font->color.g, font->color.b,
+			        font->color.a},
+
+			    {current_position.x, current_position.y, cursor.start.x,
+			        cursor.start.y, font->color.r, font->color.g, font->color.b,
+			        font->color.a},
+
+			    {current_position.x + 4, current_position.y + font->font_size,
+			        cursor.end.x, cursor.end.y, font->color.r, font->color.g,
+			        font->color.b, font->color.a},
+			};
+			debug("current_position %f, %f", current_position.x, current_position.y);
+			render_object_load_sub_data(
+			    &font->object, sizeof(temp_vertices), 0, temp_vertices);
 		}
 		if (current_position.x + advance < font->position.x + font->size.x) {
 			float temp_vertices[6][8] = {
@@ -92,7 +128,7 @@ void font_update(font_t *font, const char *string) {
 			current_position.x += character.advance.x >> 6;
 			debug("current_position %f, %f", current_position.x, current_position.y);
 			render_object_load_sub_data(&font->object, sizeof(temp_vertices),
-			    sizeof(temp_vertices) * i, temp_vertices);
+			    sizeof(temp_vertices) * (i + cursor), temp_vertices);
 		}
 	}
 }
