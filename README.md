@@ -13,26 +13,10 @@ This software depends on a number of libraries. The following libraries have the
 
 ## v1.0 goals
 
-- Create, edit, save, close and delete files up to 4KiB in size. - Implemented
+- Create, edit, save, close and delete files up to 4KiB in size. - Implemented, except for delete
 - Have working hotkeys, and text area. - Implemented
 - Render using OpenGL calls. - Implemented
-- Display file name, size, location, etc...
+- Display file name, size, location, etc... - Implemented name and location, but not size.
 - Use a split buffer to store text, no multiline edits - Implemented
 - try to get copy-pasting to work - Not implemented
 - Only on linux to start with.
-
-## TODO
-
-- Application Startup and Shutdown
-- Logger
-- File I/O
-- User Input and Events
-- Graphics Abstraction Layer
-- UI/UX
-
-## Next Stream TODO
-
-- Explain fixes made to font primitive
-- Finish font primitive
-- display file contents
-- display file name
