@@ -1,6 +1,6 @@
 SRCS := ${shell find src -type f -name *.c}
-CFLAGS := -std=c17 -g -Wall -Wpedantic -Isrc -Iinc/stb -I/usr/include/freetype2 -fsanitize=address
-LDFLAGS := -lglfw -lGL -lGLEW -lm -lfreetype
+CFLAGS := -std=c17 -g -Wall -Wpedantic -Isrc -Iinc/stb -I/usr/include/freetype2 -fsanitize=address -D_POSIX_C_SOURCE=199309L
+LDFLAGS := -lglfw -lGL -lGLEW -lm -lfreetype -lrt
 BINARY := bin/text-editor
 
 .PHONY : run debug memcheck clean

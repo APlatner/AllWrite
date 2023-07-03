@@ -13,13 +13,12 @@ This software depends on a number of libraries. The following libraries have the
 
 ## v1.0 goals
 
-- Create, edit, save, close and delete files up to 4KiB in size.
-- Have working hotkeys, and text area.
-- Render using OpenGL calls.
+- Create, edit, save, close and delete files up to 4KiB in size. - Implemented
+- Have working hotkeys, and text area. - Implemented
+- Render using OpenGL calls. - Implemented
 - Display file name, size, location, etc...
-- Use a split buffer to store text, no multiline edits
-- try to get copy-pasting to work
-- No syntax highlighting, or bracket matching.
+- Use a split buffer to store text, no multiline edits - Implemented
+- try to get copy-pasting to work - Not implemented
 - Only on linux to start with.
 
 ## TODO
@@ -37,11 +36,3 @@ This software depends on a number of libraries. The following libraries have the
 - Finish font primitive
 - display file contents
 - display file name
-
-## Keybindings
-
-- Movement - alt + [i,j,k,l]
-- Open File - ctrl + o
-- Close File - ctrl + q
-- Save File - ctrl + s
-- Exit program - esc

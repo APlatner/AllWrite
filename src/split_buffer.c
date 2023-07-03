@@ -1,5 +1,5 @@
 #include "split_buffer.h"
-
+#define NDEBUG
 #include "logger.h"
 
 #include <stdlib.h>
@@ -34,7 +34,7 @@ result_t split_buffer_move(split_buffer_t *split_buffer, long distance) {
 		return TEXT_BUFFER_ERROR;
 	}
 	if (split_buffer->pre_cursor_index + distance > split_buffer->current_size ||
-	    split_buffer->pre_cursor_index < 0) {
+	    split_buffer->pre_cursor_index + distance < 0) {
 		error("distance must be within the bounds of the buffer's current size!");
 		return TEXT_BUFFER_ERROR;
 	}
@@ -54,6 +54,38 @@ result_t split_buffer_move(split_buffer_t *split_buffer, long distance) {
 	    split_buffer->pre_cursor_index, split_buffer->post_cursor_index,
 	    split_buffer->current_size);
 	debug("moved %ld", distance);
+
+	return NO_ERROR;
+}
+
+result_t split_buffer_ascend(split_buffer_t *split_buffer) {
+	if (split_buffer->pre_cursor_index == 0) {
+		trace("end of buffer");
+		return NO_ERROR;
+	}
+	for (int i = split_buffer->pre_cursor_index - 1; i > 0; i--) {
+		char c = split_buffer->buffer[i];
+		if (c == '\n') {
+			split_buffer_move(split_buffer, i - split_buffer->pre_cursor_index);
+			break;
+		}
+	}
+
+	return NO_ERROR;
+}
+
+result_t split_buffer_descend(split_buffer_t *split_buffer) {
+	if (split_buffer->pre_cursor_index == split_buffer->current_size) {
+		trace("end of buffer");
+		return NO_ERROR;
+	}
+	for (int i = split_buffer->post_cursor_index + 1; i < MAX_BUFFER_SIZE; i++) {
+		char c = split_buffer->buffer[i];
+		if (c == '\n') {
+			split_buffer_move(split_buffer, i - split_buffer->post_cursor_index);
+			break;
+		}
+	}
 
 	return NO_ERROR;
 }
@@ -106,7 +138,7 @@ char *split_buffer_to_string(split_buffer_t *split_buffer) {
 	string[split_buffer->pre_cursor_index] = '\0';
 	debug("pre cursor buffer: %s; current_size: %ld", string,
 	    split_buffer->current_size);
-	strncat(string, &split_buffer->buffer[split_buffer->post_cursor_index - 1],
+	strncat(string, &split_buffer->buffer[split_buffer->post_cursor_index],
 	    MAX_BUFFER_SIZE - split_buffer->post_cursor_index);
 	debug("post cursor buffer: %s", &string[split_buffer->pre_cursor_index]);
 

@@ -1,4 +1,5 @@
 #include "render_object.h"
+#define NDEBUG
 #include "logger.h"
 
 #include <ft2build.h>
@@ -209,7 +210,7 @@ int compile_shader(
 		fclose(file);
 		return 1;
 	}
-	shader_code[len] = '\0'; // forgot to null terminate the string
+	shader_code[len] = '\0';
 	trace("shader code copied");
 
 	int success;

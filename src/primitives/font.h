@@ -18,6 +18,7 @@
 
 #include <render_object.h>
 #include <math/vector.h>
+#include <math/matrix.h>
 
 typedef struct font_t {
 	render_object_t object;
@@ -28,9 +29,8 @@ typedef struct font_t {
 
 	char_glyph_t characters[128];
 	float font_size;
-	long cursor_position;
 } font_t;
 
-int font_load(font_t *font, const char *font_filepath, const char *string);
-void font_update(font_t *font, const char *string);
+int font_load(font_t *font, long cursor_position, const char *font_filepath, const char *string, mat4_t projection);
+void font_update(font_t *font, long cursor_position, const char *string, float vertical_offset);
 void font_destroy(font_t *font);

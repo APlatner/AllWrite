@@ -34,6 +34,8 @@ void split_buffer_create(split_buffer_t *split_buffer, const char *string);
 void split_buffer_destroy(split_buffer_t *split_buffer);
 
 result_t split_buffer_move(split_buffer_t *split_buffer, long distance);
+result_t split_buffer_ascend(split_buffer_t *split_buffer);
+result_t split_buffer_descend(split_buffer_t *split_buffer);
 
 result_t split_buffer_append(split_buffer_t *split_buffer, char c);
 result_t split_buffer_remove(split_buffer_t *split_buffer);
